@@ -1,6 +1,7 @@
 package kz.iitu.springlab.web;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,19 @@ public class HelloController {
         );
     }
 
+    @GetMapping("/stats")
+    public Stats stats(@RequestParam String numbers) {
+        double[] values = Arrays.stream(numbers.split(","))
+                .mapToDouble(Double::parseDouble)
+                .toArray();
+
+        double min = Arrays.stream(values).min().orElse(0);
+        double max = Arrays.stream(values).max().orElse(0);
+        double average = Arrays.stream(values).average().orElse(0);
+
+        return new Stats(min, max, average);
+    }
+
     public record Greeting(
             String message,
             String owner,
@@ -43,5 +57,11 @@ public class HelloController {
             String owner,
             String javaVersion,
             int cpuCores
+    ) {}
+
+    public record Stats(
+            double minimum,
+            double maximum,
+            double average
     ) {}
 }

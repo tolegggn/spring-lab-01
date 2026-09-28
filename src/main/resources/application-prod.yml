@@ -5,9 +5,6 @@ app:
   mail:
     enabled: true
     retry-count: 5
-  security:
-    token-ttl: 15m
-    min-password-length: 14
 
 logging:
   level:

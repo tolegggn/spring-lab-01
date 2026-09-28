@@ -17,7 +17,7 @@ public record AppProperties(
         @NotBlank String owner,
         @NotBlank String group,
         @Valid Mail mail,
-        @Valid Security security) {
+        @Valid Pagination pagination) {
 
     public record Mail(
             @NotBlank String from,
@@ -26,8 +26,8 @@ public record AppProperties(
             @DefaultValue("true") boolean enabled) {
     }
 
-    public record Security(
-            @NotNull @DefaultValue("15m") Duration tokenTtl,
-            @Min(8) @DefaultValue("12") int minPasswordLength) {
+    public record Pagination(
+            @Min(1) @Max(100) @DefaultValue("20") int defaultSize,
+            @Min(1) @Max(500) @DefaultValue("100") int maxSize) {
     }
 }

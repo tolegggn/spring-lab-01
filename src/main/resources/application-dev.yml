@@ -5,9 +5,9 @@ app:
   mail:
     enabled: false
     retry-count: 1
-  security:
-    token-ttl: 30m
-    min-password-length: 10
+  pagination:
+    default-size: 10
+    max-size: 200
 
 logging:
   level:

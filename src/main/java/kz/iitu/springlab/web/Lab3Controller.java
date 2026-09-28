@@ -27,7 +27,7 @@ public class Lab3Controller {
     @GetMapping("/config")
     public Map<String, Object> config() {
         AppProperties.Mail mail = properties.mail();
-        AppProperties.Security security = properties.security();
+        AppProperties.Pagination pagination = properties.pagination();
 
         return Map.ofEntries(
                 Map.entry("owner", properties.owner()),
@@ -36,8 +36,8 @@ public class Lab3Controller {
                 Map.entry("mailRetryCount", mail.retryCount()),
                 Map.entry("mailTimeout", mail.timeout().toString()),
                 Map.entry("mailEnabled", mail.enabled()),
-                Map.entry("securityTokenTtl", security.tokenTtl().toString()),
-                Map.entry("securityMinPasswordLength", security.minPasswordLength()),
+                Map.entry("paginationDefaultSize", pagination.defaultSize()),
+                Map.entry("paginationMaxSize", pagination.maxSize()),
                 Map.entry("serverPort", environment.getProperty("server.port")),
                 Map.entry("activeProfiles", Arrays.asList(environment.getActiveProfiles())),
                 Map.entry("banner", banner.describe())

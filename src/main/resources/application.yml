@@ -13,9 +13,9 @@ app:
     retry-count: 3
     timeout: 5s
     enabled: true
-  security:
-    token-ttl: 15m
-    min-password-length: 12
+  pagination:
+    default-size: 20
+    max-size: 100
 
 logging:
   level:

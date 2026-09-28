@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: spring-lab-01
+
+server:
+  port: 8080
+
+app:
+  owner: Tolegen Alikhan
+  group: 2406IS
+  mail:
+    from: no-reply@iitu.kz
+    retry-count: 3
+    timeout: 5s
+    enabled: true
+  pagination:
+    default-size: 20
+    max-size: 100
+
+logging:
+  level:
+    kz.iitu: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,env,configprops,conditions

@@ -1,6 +1,8 @@
 package kz.iitu.springlab.config;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +22,7 @@ public record AppProperties(
         @Valid Pagination pagination) {
 
     public record Mail(
-            @NotBlank String from,
+            @NotBlank @Email String from,
             @Min(1) @Max(10) @DefaultValue("3") int retryCount,
             @NotNull @DefaultValue("5s") Duration timeout,
             @DefaultValue("true") boolean enabled) {
@@ -29,5 +31,10 @@ public record AppProperties(
     public record Pagination(
             @Min(1) @Max(100) @DefaultValue("20") int defaultSize,
             @Min(1) @Max(500) @DefaultValue("100") int maxSize) {
+
+        @AssertTrue(message = "default-size must not exceed max-size")
+        public boolean isDefaultSizeNotGreaterThanMaxSize() {
+            return defaultSize <= maxSize;
+        }
     }
 }

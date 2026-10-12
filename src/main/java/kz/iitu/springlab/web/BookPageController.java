@@ -1,10 +1,15 @@
 package kz.iitu.springlab.web;
 
+import jakarta.validation.Valid;
 import kz.iitu.springlab.catalog.Book;
 import kz.iitu.springlab.catalog.BookService;
+import kz.iitu.springlab.catalog.Genre;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,14 +35,37 @@ public class BookPageController {
         return "books/list"; // -> templates/books/list.html
     }
 
+    @GetMapping("/new")
+    public String newForm(Model model) {
+        model.addAttribute("form", new BookForm());
+        model.addAttribute("genres", Genre.values());
+        return "books/form";
+    }
+
     @PostMapping
-    public String create(@RequestParam String title,
-                         @RequestParam String author,
-                         @RequestParam int year,
+    public String create(@Valid @ModelAttribute("form") BookForm form,
+                         BindingResult binding,          // immediately after!
+                         Model model,
                          RedirectAttributes redirect) {
-        Book saved = service.create(new Book(null, title, author, year));
+
+        if (binding.hasErrors()) {
+            model.addAttribute("genres", Genre.values());   // the model again
+            return "books/form";
+        }
+
+        Book saved = service.create(new Book(null, form.getTitle(),
+                form.getAuthor(), form.getYear()));
+
         redirect.addFlashAttribute("message",
                 "Book «" + saved.title() + "» has been added");
-        return "redirect:/books"; // 302; the browser performs a GET
+        return "redirect:/books";
+    }
+
+    // Task 4: triggers PageExceptionHandler if book with ID is not found
+    @GetMapping("/{id}")
+    public String details(@PathVariable long id, Model model) {
+        Book book = service.getById(id);
+        model.addAttribute("book", book);
+        return "books/details";
     }
 }

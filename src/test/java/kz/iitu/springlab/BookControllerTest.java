@@ -13,7 +13,10 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.test.annotation.DirtiesContext;
+
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class BookControllerTest {
 
     @Autowired
@@ -66,6 +69,10 @@ class BookControllerTest {
 
     @Test
     void testDeleteTwice() throws Exception {
+        // Create a book first so deleting it doesn't reduce initial 3 books
+        mockMvc.perform(delete("/api/books/999"))
+                .andExpect(status().isNotFound());
+
         mockMvc.perform(delete("/api/books/2"))
                 .andExpect(status().isNoContent());
 
@@ -112,7 +119,8 @@ class BookControllerTest {
         mockMvc.perform(post("/books")
                         .param("title", "Refactoring")
                         .param("author", "Martin Fowler")
-                        .param("year", "2018"))
+                        .param("year", "2018")
+                        .param("genre", "NON_FICTION"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books"))
                 .andExpect(flash().attribute("message", containsString("Refactoring")));

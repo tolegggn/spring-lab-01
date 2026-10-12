@@ -1,0 +1,45 @@
+### ==============================================================
+### Laboratory Work No. 6: Forms, Validation, i18n & Exception Handling
+### ==============================================================
+
+### 1. Open form in English
+GET http://localhost:8080/books/new?lang=en
+
+### 2. Open form in Russian
+GET http://localhost:8080/books/new?lang=ru
+
+### 3. Submit empty form (fails validation on all required fields)
+POST http://localhost:8080/books
+Content-Type: application/x-www-form-urlencoded
+
+### 4. Submit form with invalid year and no genre
+POST http://localhost:8080/books
+Content-Type: application/x-www-form-urlencoded
+
+title=Java Concurrency&author=Brian Goetz&year=1200
+
+### 5. Submit form with author containing digits (violates @NoDigits)
+POST http://localhost:8080/books
+Content-Type: application/x-www-form-urlencoded
+
+title=Effective Java&author=Bloch 2018&year=2018&genre=SCIENCE
+
+### 6. Variant 2: Class-level constraint violation (reprintYear < year)
+POST http://localhost:8080/books
+Content-Type: application/x-www-form-urlencoded
+
+title=Clean Architecture&author=Robert Martin&year=2020&reprintYear=2010&genre=NON_FICTION
+
+### 7. Successful submission (redirects to /books with flash message)
+POST http://localhost:8080/books
+Content-Type: application/x-www-form-urlencoded
+
+title=Clean Architecture&author=Robert Martin&year=2020&reprintYear=2022&genre=NON_FICTION&available=true
+
+### 8. Exception handling for Page: GET /books/999 -> returns HTML template error/not-found
+GET http://localhost:8080/books/999
+Accept: text/html
+
+### 9. Exception handling for API: GET /api/books/999 -> returns RFC 7807/9457 ProblemDetail JSON
+GET http://localhost:8080/api/books/999
+Accept: application/json

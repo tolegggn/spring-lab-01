@@ -108,3 +108,71 @@ button:hover {
 .reset-link:hover {
     text-decoration: underline;
 }
+
+/* Validation styles (Task 2 & Variant 2) */
+.form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.form-group select, .form-group input[type="text"], .form-group input[type="number"] {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 14px;
+    max-width: 400px;
+}
+
+.is-invalid {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+}
+
+.error {
+    color: #ef4444;
+    font-size: 13px;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+.alert {
+    background-color: #fef2f2;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+    padding: 12px 16px;
+    margin: 1rem 0;
+    border-radius: 4px;
+}
+
+.alert ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.global-error {
+    background-color: #fff7ed;
+    border-left-color: #f97316;
+    color: #9a3412;
+}
+
+.lang-switch {
+    text-align: right;
+    margin-bottom: 1rem;
+    font-size: 14px;
+}
+
+.lang-switch a {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.lang-switch a:hover {
+    text-decoration: underline;
+}

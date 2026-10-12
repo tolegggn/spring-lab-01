@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Новая книга</title>
+    <link rel="stylesheet" href="/css/app.css;jsessionid=4233F52E19FB3BDE2BB984B7AA855940">
+</head>
+<body>
+
+<div class="lang-switch">
+    <a href="/books/new;jsessionid=4233F52E19FB3BDE2BB984B7AA855940?lang=en">English</a> |
+    <a href="/books/new;jsessionid=4233F52E19FB3BDE2BB984B7AA855940?lang=ru">Русский</a>
+</div>
+
+<h1>Новая книга</h1>
+
+<form action="/books;jsessionid=4233F52E19FB3BDE2BB984B7AA855940" method="post">
+
+    <!-- Global errors and all-errors summary INSIDE the form -->
+    <div class="alert">
+        <ul>
+            <li>Автор не может быть пустым</li>
+            <li>Выберите жанр</li>
+            <li>Год должен быть в диапазоне 1450–2100</li>
+            <li>Название не может быть пустым</li>
+        </ul>
+    </div>
+
+    <!-- Variant 2: Specific block for class-level global error -->
+    
+
+    <div class="form-group">
+        <label>Название</label>
+        <input type="text" id="title" name="title" value="" class="is-invalid">
+        <span class="error">Название не может быть пустым</span>
+    </div>
+
+    <div class="form-group">
+        <label>Автор</label>
+        <input type="text" id="author" name="author" value="" class="is-invalid">
+        <span class="error">Автор не может быть пустым</span>
+    </div>
+
+    <div class="form-group">
+        <label>Год</label>
+        <input type="number" id="year" name="year" value="0" class="is-invalid">
+        <span class="error">Год должен быть в диапазоне 1450–2100</span>
+    </div>
+
+    <!-- Variant 2: Reprint year field -->
+    <div class="form-group">
+        <label>Год переиздания</label>
+        <input type="number" id="reprintYear" name="reprintYear" value="">
+        
+    </div>
+
+    <div class="form-group">
+        <label>Жанр</label>
+        <select id="genre" name="genre" class="is-invalid">
+            <option value="">—</option>
+            <option value="FICTION">FICTION</option>
+            <option value="NON_FICTION">NON_FICTION</option>
+            <option value="SCIENCE">SCIENCE</option>
+            <option value="FANTASY">FANTASY</option>
+            <option value="HISTORY">HISTORY</option>
+        </select>
+        <span class="error">Выберите жанр</span>
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="available1" name="available" value="true"><input type="hidden" name="_available" value="on"/>
+            <span>В наличии</span>
+        </label>
+    </div>
+
+    <button type="submit">Сохранить</button>
+    <a href="/books;jsessionid=4233F52E19FB3BDE2BB984B7AA855940" style="margin-left: 1rem;">Назад к каталогу</a>
+</form>
+
+</body>
+</html>

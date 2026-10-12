@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Новая книга</title>
+    <link rel="stylesheet" href="/css/app.css;jsessionid=D1FE44E7903A0FDFE5FF797934466A81">
+</head>
+<body>
+
+<div class="lang-switch">
+    <a href="/books/new;jsessionid=D1FE44E7903A0FDFE5FF797934466A81?lang=en">English</a> |
+    <a href="/books/new;jsessionid=D1FE44E7903A0FDFE5FF797934466A81?lang=ru">Русский</a>
+</div>
+
+<h1>Новая книга</h1>
+
+<form action="/books;jsessionid=D1FE44E7903A0FDFE5FF797934466A81" method="post">
+
+    <!-- Global errors and all-errors summary INSIDE the form -->
+    <div class="alert">
+        <ul>
+            <li>Имя автора не должно содержать цифры</li>
+        </ul>
+    </div>
+
+    <!-- Variant 2: Specific block for class-level global error -->
+    
+
+    <div class="form-group">
+        <label>Название</label>
+        <input type="text" id="title" name="title" value="Effective Java">
+        
+    </div>
+
+    <div class="form-group">
+        <label>Автор</label>
+        <input type="text" id="author" name="author" value="Bloch 2018" class="is-invalid">
+        <span class="error">Имя автора не должно содержать цифры</span>
+    </div>
+
+    <div class="form-group">
+        <label>Год</label>
+        <input type="number" id="year" name="year" value="2018">
+        
+    </div>
+
+    <!-- Variant 2: Reprint year field -->
+    <div class="form-group">
+        <label>Год переиздания</label>
+        <input type="number" id="reprintYear" name="reprintYear" value="">
+        
+    </div>
+
+    <div class="form-group">
+        <label>Жанр</label>
+        <select id="genre" name="genre">
+            <option value="">—</option>
+            <option value="FICTION">FICTION</option>
+            <option value="NON_FICTION">NON_FICTION</option>
+            <option value="SCIENCE" selected="selected">SCIENCE</option>
+            <option value="FANTASY">FANTASY</option>
+            <option value="HISTORY">HISTORY</option>
+        </select>
+        
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="available1" name="available" value="true"><input type="hidden" name="_available" value="on"/>
+            <span>В наличии</span>
+        </label>
+    </div>
+
+    <button type="submit">Сохранить</button>
+    <a href="/books;jsessionid=D1FE44E7903A0FDFE5FF797934466A81" style="margin-left: 1rem;">Назад к каталогу</a>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Новая книга</title>
+    <link rel="stylesheet" href="/css/app.css;jsessionid=B56CC276492028F50C57C0A4AED0CEFF">
+</head>
+<body>
+
+<div class="lang-switch">
+    <a href="/books/new;jsessionid=B56CC276492028F50C57C0A4AED0CEFF?lang=en">English</a> |
+    <a href="/books/new;jsessionid=B56CC276492028F50C57C0A4AED0CEFF?lang=ru">Русский</a>
+</div>
+
+<h1>Новая книга</h1>
+
+<form action="/books;jsessionid=B56CC276492028F50C57C0A4AED0CEFF" method="post">
+
+    <!-- Global errors and all-errors summary INSIDE the form -->
+    <div class="alert">
+        <ul>
+            <li>Год переиздания не может быть раньше года первого издания</li>
+        </ul>
+    </div>
+
+    <!-- Variant 2: Specific block for class-level global error -->
+    <div class="alert global-error">
+        <ul>
+            <li>Год переиздания не может быть раньше года первого издания</li>
+        </ul>
+    </div>
+
+    <div class="form-group">
+        <label>Название</label>
+        <input type="text" id="title" name="title" value="Clean Architecture">
+        
+    </div>
+
+    <div class="form-group">
+        <label>Автор</label>
+        <input type="text" id="author" name="author" value="Robert Martin">
+        
+    </div>
+
+    <div class="form-group">
+        <label>Год</label>
+        <input type="number" id="year" name="year" value="2020">
+        
+    </div>
+
+    <!-- Variant 2: Reprint year field -->
+    <div class="form-group">
+        <label>Год переиздания</label>
+        <input type="number" id="reprintYear" name="reprintYear" value="2010">
+        
+    </div>
+
+    <div class="form-group">
+        <label>Жанр</label>
+        <select id="genre" name="genre">
+            <option value="">—</option>
+            <option value="FICTION">FICTION</option>
+            <option value="NON_FICTION" selected="selected">NON_FICTION</option>
+            <option value="SCIENCE">SCIENCE</option>
+            <option value="FANTASY">FANTASY</option>
+            <option value="HISTORY">HISTORY</option>
+        </select>
+        
+    </div>
+
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="available1" name="available" value="true"><input type="hidden" name="_available" value="on"/>
+            <span>В наличии</span>
+        </label>
+    </div>
+
+    <button type="submit">Сохранить</button>
+    <a href="/books;jsessionid=B56CC276492028F50C57C0A4AED0CEFF" style="margin-left: 1rem;">Назад к каталогу</a>
+</form>
+
+</body>
+</html>

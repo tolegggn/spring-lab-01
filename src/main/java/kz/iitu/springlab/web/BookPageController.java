@@ -54,7 +54,9 @@ public class BookPageController {
         }
 
         Book saved = service.create(new Book(null, form.getTitle(),
-                form.getAuthor(), form.getYear()));
+                form.getAuthor(), form.getYear(),
+                form.getGenre() != null ? form.getGenre() : Genre.FICTION,
+                java.time.Instant.now()));
 
         redirect.addFlashAttribute("message",
                 "Book «" + saved.title() + "» has been added");

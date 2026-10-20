@@ -1,0 +1,85 @@
+### 1. GET all books (200 OK)
+GET http://localhost:8080/api/books
+Accept: application/json
+
+### 2. GET book by existing id (200 OK)
+GET http://localhost:8080/api/books/1
+Accept: application/json
+
+### 3. GET book by missing id (404 Not Found - RFC 9457 ProblemDetail)
+GET http://localhost:8080/api/books/999
+Accept: application/problem+json
+
+### 4. POST create a valid book (201 Created + Location header)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Designing Data-Intensive Applications",
+  "author": "Martin Kleppmann",
+  "year": 2017,
+  "genre": "NON_FICTION"
+}
+
+### 5. POST create a duplicate book (409 Conflict - RFC 9457 ProblemDetail)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+Accept: application/problem+json
+
+{
+  "title": "Clean Code",
+  "author": "Robert Martin",
+  "year": 2008,
+  "genre": "NON_FICTION"
+}
+
+### 6. POST create book with empty/invalid title (400 Bad Request - RFC 9457 ProblemDetail)
+POST http://localhost:8080/api/books
+Content-Type: application/json
+Accept: application/problem+json
+
+{
+  "title": "",
+  "author": "Anonymous",
+  "year": 2020,
+  "genre": "FICTION"
+}
+
+### 7. PUT update an existing book (200 OK)
+PUT http://localhost:8080/api/books/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "Effective Java (3rd Edition)",
+  "author": "Joshua Bloch",
+  "year": 2018,
+  "genre": "NON_FICTION"
+}
+
+### 8. PUT update non-existing book (404 Not Found - RFC 9457 ProblemDetail)
+PUT http://localhost:8080/api/books/999
+Content-Type: application/json
+Accept: application/problem+json
+
+{
+  "title": "Non-existent",
+  "author": "Nobody",
+  "year": 2024,
+  "genre": "FICTION"
+}
+
+### 9. DELETE an existing book (204 No Content)
+DELETE http://localhost:8080/api/books/1
+
+### 10. DELETE the same book a second time (204 No Content - Idempotent)
+DELETE http://localhost:8080/api/books/1
+
+### 11. Individual Variant 2: Sorting and filtering (?sort=year,desc&genre=NOVEL)
+GET http://localhost:8080/api/books?sort=year,desc&genre=NOVEL
+Accept: application/json
+
+### 12. Individual Variant 2: Unknown sort field (400 Bad Request - RFC 9457 ProblemDetail)
+GET http://localhost:8080/api/books?sort=price,desc
+Accept: application/problem+json

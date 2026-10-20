@@ -5,5 +5,6 @@ public enum Genre {
     NON_FICTION,
     SCIENCE,
     FANTASY,
-    HISTORY
+    HISTORY,
+    NOVEL
 }

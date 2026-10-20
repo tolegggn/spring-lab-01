@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Reports and Logs ###
+*.log
+*.docx
+*.html
+*.pdf
+Report_*
+

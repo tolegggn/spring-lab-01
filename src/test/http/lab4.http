@@ -1,0 +1,26 @@
+### 1. Get Item by ID (logged, timed, not audited)
+GET http://localhost:8080/api/lab4/item/42
+
+### 2. Get All Items (audited CATALOG_LIST, logged, timed, captured in Variant 2 slow list)
+GET http://localhost:8080/api/lab4/items?limit=5
+
+### 3. Delete Item 0 (throws exception, @AfterThrowing, audited failure)
+DELETE http://localhost:8080/api/lab4/item/0
+
+### 4. Delete Item 5 (successful removal, @AfterReturning, audited success)
+DELETE http://localhost:8080/api/lab4/item/5
+
+### 5. Inspect CGLIB Proxy Metadata
+GET http://localhost:8080/api/lab4/proxy
+
+### 6. Remove Twice - Self-Invocation (internal calls bypass proxy)
+GET http://localhost:8080/api/lab4/remove-twice/5
+
+### 7. Remove Twice - Fixed with Self-Reference (internal calls intercepted by proxy)
+GET http://localhost:8080/api/lab4/remove-twice-fixed/5
+
+### 8. Variant 2 - Query Collected Slow Methods
+GET http://localhost:8080/api/lab4/slow-methods
+
+### 9. Variant 2 - Clear Slow Methods
+DELETE http://localhost:8080/api/lab4/slow-methods

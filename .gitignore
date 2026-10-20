@@ -36,3 +36,5 @@ build/
 *.log
 Report_*.docx
 Report_*.html
+Report_*.pdf
+

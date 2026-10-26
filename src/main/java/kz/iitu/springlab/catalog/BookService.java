@@ -1,6 +1,10 @@
 package kz.iitu.springlab.catalog;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -8,19 +12,59 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class BookService {
 
     private final BookRepository repository;
+    private final AuthorRepository authorRepository;
 
-    public BookService(BookRepository repository) {
+    public BookService(BookRepository repository, AuthorRepository authorRepository) {
         this.repository = repository;
+        this.authorRepository = authorRepository;
+    }
+
+    // Task 4.1: Paged and sorted search
+    public Page<Book> find(Genre genre, Pageable pageable) {
+        if (genre != null) {
+            return repository.findByGenre(genre, pageable);
+        }
+        return repository.findAll(pageable);
+    }
+
+    // Task 4.3: Slice version for comparison
+    public Slice<Book> findSlice(Genre genre, Pageable pageable) {
+        if (genre != null) {
+            return repository.findSliceByGenre(genre, pageable);
+        }
+        return repository.findAll(pageable);
+    }
+
+    // Task 3.2: JPQL search
+    public List<Book> search(Genre genre, int year) {
+        return repository.search(genre, year);
+    }
+
+    // Task 3.2: Bulk update requires @Transactional (write mode)
+    @Transactional
+    public int archiveOlderThan(int year) {
+        return repository.archiveOlderThan(year);
+    }
+
+    // Task 3.4: Fetch join to prevent N+1
+    public List<Book> findAllWithAuthor() {
+        return repository.findAllWithAuthor();
+    }
+
+    public List<Book> findAll() {
+        return repository.findAll();
     }
 
     public List<Book> findAll(String author, String genre, String sort) {
         var stream = repository.findAll().stream();
 
         if (author != null && !author.isBlank()) {
-            stream = stream.filter(b -> b.author().toLowerCase().contains(author.trim().toLowerCase()));
+            stream = stream.filter(b -> b.author() != null &&
+                    b.author().toLowerCase().contains(author.trim().toLowerCase()));
         }
 
         if (genre != null && !genre.isBlank()) {
@@ -41,7 +85,8 @@ public class BookService {
             switch (field.toLowerCase()) {
                 case "id" -> comparator = Comparator.comparing(Book::id);
                 case "title" -> comparator = Comparator.comparing(Book::title, String.CASE_INSENSITIVE_ORDER);
-                case "author" -> comparator = Comparator.comparing(Book::author, String.CASE_INSENSITIVE_ORDER);
+                case "author" -> comparator = Comparator.comparing(
+                        b -> b.author() != null ? b.author() : "", String.CASE_INSENSITIVE_ORDER);
                 case "year" -> comparator = Comparator.comparingInt(Book::year);
                 case "genre" -> comparator = Comparator.comparing(b -> b.genre().name());
                 case "createdat" -> comparator = Comparator.comparing(Book::createdAt);
@@ -62,10 +107,6 @@ public class BookService {
         return findAll(author, null, null);
     }
 
-    public List<Book> findAll() {
-        return findAll(null, null, null);
-    }
-
     public Optional<Book> findById(long id) {
         return repository.findById(id);
     }
@@ -75,49 +116,60 @@ public class BookService {
                 .orElseThrow(() -> new BookNotFoundException(id));
     }
 
+    @Transactional
     public Book create(Book book) {
+        return create(book, book.author());
+    }
+
+    @Transactional
+    public Book create(Book book, String authorName) {
+        if (authorName != null && !authorName.isBlank()) {
+            Author author = authorRepository.findByName(authorName.trim())
+                    .orElseGet(() -> authorRepository.save(new Author(authorName.trim(), "Unknown")));
+            author.addBook(book);
+        }
+
         boolean duplicate = repository.findAll().stream()
                 .anyMatch(b -> b.title().trim().equalsIgnoreCase(book.title().trim())
-                            && b.author().trim().equalsIgnoreCase(book.author().trim()));
+                        && b.author() != null
+                        && b.author().trim().equalsIgnoreCase(book.author() != null ? book.author().trim() : ""));
         if (duplicate) {
             throw new DuplicateTitleException(book.title());
         }
+
         return repository.save(book);
     }
 
-    public Book update(long id, Book book) {
-        Optional<Book> existing = repository.findById(id);
-        if (existing.isEmpty()) {
-            throw new BookNotFoundException(id);
-        }
-
-        boolean duplicate = repository.findAll().stream()
-                .anyMatch(b -> !b.id().equals(id)
-                            && b.title().trim().equalsIgnoreCase(book.title().trim())
-                            && b.author().trim().equalsIgnoreCase(book.author().trim()));
-        if (duplicate) {
-            throw new DuplicateTitleException(book.title());
-        }
-
-        Book updated = new Book(id, book.title(), book.author(), book.year(), book.genre(),
-                existing.get().createdAt());
-        return repository.save(updated);
+    @Transactional
+    public Book update(long id, Book updatedData) {
+        return update(id, updatedData, updatedData.author());
     }
 
-    public Optional<Book> replace(long id, Book book) {
-        if (repository.findById(id).isEmpty()) {
-            return Optional.empty();
+    @Transactional
+    public Book update(long id, Book updatedData, String authorName) {
+        Book existing = repository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
+
+        if (authorName != null && !authorName.isBlank()) {
+            Author author = authorRepository.findByName(authorName.trim())
+                    .orElseGet(() -> authorRepository.save(new Author(authorName.trim(), "Unknown")));
+            author.addBook(existing);
         }
-        return Optional.of(update(id, book));
+
+        existing.setTitle(updatedData.getTitle());
+        existing.setGenre(updatedData.getGenre());
+        existing.setYear(updatedData.getYear());
+        existing.setArchived(updatedData.isArchived());
+
+        return repository.save(existing);
     }
 
+    @Transactional
     public boolean delete(long id) {
-        return repository.deleteById(id);
-    }
-
-    public List<Book> findByYear(int year) {
-        return repository.findAll().stream()
-                .filter(b -> b.year() == year)
-                .toList();
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

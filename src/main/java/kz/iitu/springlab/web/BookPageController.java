@@ -44,26 +44,25 @@ public class BookPageController {
 
     @PostMapping
     public String create(@Valid @ModelAttribute("form") BookForm form,
-                         BindingResult binding,          // immediately after!
+                         BindingResult binding,
                          Model model,
                          RedirectAttributes redirect) {
 
         if (binding.hasErrors()) {
-            model.addAttribute("genres", Genre.values());   // the model again
+            model.addAttribute("genres", Genre.values());
             return "books/form";
         }
 
-        Book saved = service.create(new Book(null, form.getTitle(),
-                form.getAuthor(), form.getYear(),
+        Book toSave = new Book(form.getTitle(),
                 form.getGenre() != null ? form.getGenre() : Genre.FICTION,
-                java.time.Instant.now()));
+                form.getYear());
+        Book saved = service.create(toSave, form.getAuthor());
 
         redirect.addFlashAttribute("message",
                 "Book «" + saved.title() + "» has been added");
         return "redirect:/books";
     }
 
-    // Task 4: triggers PageExceptionHandler if book with ID is not found
     @GetMapping("/{id}")
     public String details(@PathVariable long id, Model model) {
         Book book = service.getById(id);

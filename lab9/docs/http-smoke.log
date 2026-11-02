@@ -1,0 +1,4 @@
+PASS HTTP: initial 1000/500; transfer 204 -> 900/600; insufficient 409 unchanged; invalid 400; missing 404
+PASS restart phase 2: persisted balances 900/600
+PASS restart phase 3: persisted balances 900/600
+PASS application lifecycle: fresh V1/V2; restart applies zero; next restart applies only V3

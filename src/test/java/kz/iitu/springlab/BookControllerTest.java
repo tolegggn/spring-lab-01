@@ -33,9 +33,24 @@ class BookControllerTest {
         mockMvc.perform(get("/api/books"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(3))))
-                .andExpect(jsonPath("$[0].id").exists())
-                .andExpect(jsonPath("$[0].createdAt").exists());
+                .andExpect(jsonPath("$.content", hasSize(5)))
+                .andExpect(jsonPath("$.totalElements").value(8))
+                .andExpect(jsonPath("$.content[0].id").exists())
+                .andExpect(jsonPath("$.content[0].createdAt").exists());
+    }
+
+    @Test
+    void testSecondPageAndSlice() throws Exception {
+        mockMvc.perform(get("/api/books").param("page", "1").param("size", "3").param("sort", "year,desc"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.totalElements").value(8))
+                .andExpect(jsonPath("$.content[0].year").value(2008));
+
+        mockMvc.perform(get("/api/books/slice").param("size", "3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                .andExpect(jsonPath("$.totalElements").doesNotExist());
     }
 
     @Test
@@ -43,8 +58,8 @@ class BookControllerTest {
         mockMvc.perform(get("/api/books")
                         .param("author", "Bloch"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].author", containsString("Bloch")));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].author", containsString("Bloch")));
     }
 
     @Test
@@ -133,17 +148,17 @@ class BookControllerTest {
     @Test
     void testVariant2SortingAndFiltering() throws Exception {
         // ?sort=year,desc&genre=NOVEL
-        // Seeds have "To Kill a Mockingbird" (1960) and "1984" (1949)
+        // Seeds have "1984" (1949) and "Animal Farm" (1945)
         mockMvc.perform(get("/api/books")
                         .param("sort", "year,desc")
                         .param("genre", "NOVEL"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].title").value("To Kill a Mockingbird"))
-                .andExpect(jsonPath("$[0].year").value(1960))
-                .andExpect(jsonPath("$[1].title").value("1984"))
-                .andExpect(jsonPath("$[1].year").value(1949));
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].title").value("1984"))
+                .andExpect(jsonPath("$.content[0].year").value(1949))
+                .andExpect(jsonPath("$.content[1].title").value("Animal Farm"))
+                .andExpect(jsonPath("$.content[1].year").value(1945));
     }
 
     @Test

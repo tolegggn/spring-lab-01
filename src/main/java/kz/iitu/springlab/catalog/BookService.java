@@ -25,18 +25,37 @@ public class BookService {
 
     // Task 4.1: Paged and sorted search
     public Page<Book> find(Genre genre, Pageable pageable) {
+        return find(genre, null, pageable);
+    }
+
+    public Page<Book> find(Genre genre, String author, Pageable pageable) {
+        validateSort(pageable);
+        if (author != null && !author.isBlank()) {
+            return genre == null
+                    ? repository.findByAuthorNameContainingIgnoreCase(author.trim(), pageable)
+                    : repository.findByGenreAndAuthorNameContainingIgnoreCase(genre, author.trim(), pageable);
+        }
         if (genre != null) {
             return repository.findByGenre(genre, pageable);
         }
         return repository.findAll(pageable);
     }
 
+    private void validateSort(Pageable pageable) {
+        pageable.getSort().forEach(order -> {
+            if (!List.of("id", "title", "year", "genre", "createdAt", "author").contains(order.getProperty())) {
+                throw new InvalidSortException(order.getProperty());
+            }
+        });
+    }
+
     // Task 4.3: Slice version for comparison
     public Slice<Book> findSlice(Genre genre, Pageable pageable) {
+        validateSort(pageable);
         if (genre != null) {
             return repository.findSliceByGenre(genre, pageable);
         }
-        return repository.findAll(pageable);
+        return repository.findSliceBy(pageable);
     }
 
     // Task 3.2: JPQL search
@@ -60,7 +79,7 @@ public class BookService {
     }
 
     public List<Book> findAll(String author, String genre, String sort) {
-        var stream = repository.findAll().stream();
+        var stream = repository.findAllWithAuthor().stream();
 
         if (author != null && !author.isBlank()) {
             stream = stream.filter(b -> b.author() != null &&
@@ -123,18 +142,14 @@ public class BookService {
 
     @Transactional
     public Book create(Book book, String authorName) {
+        if (authorName != null && !authorName.isBlank()
+                && repository.existsByTitleIgnoreCaseAndAuthorNameIgnoreCase(book.title().trim(), authorName.trim())) {
+            throw new DuplicateTitleException(book.title());
+        }
         if (authorName != null && !authorName.isBlank()) {
             Author author = authorRepository.findByName(authorName.trim())
                     .orElseGet(() -> authorRepository.save(new Author(authorName.trim(), "Unknown")));
             author.addBook(book);
-        }
-
-        boolean duplicate = repository.findAll().stream()
-                .anyMatch(b -> b.title().trim().equalsIgnoreCase(book.title().trim())
-                        && b.author() != null
-                        && b.author().trim().equalsIgnoreCase(book.author() != null ? book.author().trim() : ""));
-        if (duplicate) {
-            throw new DuplicateTitleException(book.title());
         }
 
         return repository.save(book);

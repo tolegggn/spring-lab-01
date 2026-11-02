@@ -45,9 +45,10 @@ public class BookApiController {
     public Page<BookResponse> list(
             @Parameter(description = "Filter books by genre", example = "NON_FICTION")
             @RequestParam(required = false) Genre genre,
+            @RequestParam(required = false) String author,
             @PageableDefault(size = 5, sort = "title") Pageable pageable) {
 
-        return service.find(genre, pageable).map(mapper::toResponse);
+        return service.find(genre, author, pageable).map(mapper::toResponse);
     }
 
     // Task 4.3: Slice version for SQL statement count comparison

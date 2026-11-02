@@ -27,6 +27,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     long countByAuthorName(String name);
 
+    boolean existsByTitleIgnoreCaseAndAuthorNameIgnoreCase(String title, String authorName);
+
     // Task 3.2: JPQL query with named parameters
     @Query("""
            select b from Book b
@@ -40,7 +42,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     int archiveOlderThan(@Param("year") int year);
 
     // Task 3.4: N+1 cure (fetch join)
-    @Query("select b from Book b join fetch b.author")
+    @Query("select b from Book b left join fetch b.author")
     List<Book> findAllWithAuthor();
 
     // Task 3.4: N+1 cure (EntityGraph)
@@ -51,6 +53,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @EntityGraph(attributePaths = "author")
     Page<Book> findByGenre(Genre genre, Pageable pageable);
 
+    @EntityGraph(attributePaths = "author")
+    Page<Book> findByAuthorNameContainingIgnoreCase(String author, Pageable pageable);
+
+    @EntityGraph(attributePaths = "author")
+    Page<Book> findByGenreAndAuthorNameContainingIgnoreCase(Genre genre, String author, Pageable pageable);
+
     @Override
     @EntityGraph(attributePaths = "author")
     Page<Book> findAll(Pageable pageable);
@@ -58,6 +66,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     // Task 4.3: Slice version
     @EntityGraph(attributePaths = "author")
     Slice<Book> findSliceByGenre(Genre genre, Pageable pageable);
+
+    @EntityGraph(attributePaths = "author")
+    Slice<Book> findSliceBy(Pageable pageable);
 
     @Override
     @EntityGraph(attributePaths = "author")

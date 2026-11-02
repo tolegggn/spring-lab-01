@@ -65,8 +65,13 @@ public class Book {
     }
 
     public void addTag(Tag tag) {
+        if (bookTags.stream().anyMatch(link -> link.getTag() == tag ||
+                (tag.getId() != null && tag.getId().equals(link.getTag().getId())))) {
+            return;
+        }
         BookTag bookTag = new BookTag(this, tag);
         this.bookTags.add(bookTag);
+        tag.getBookTags().add(bookTag);
     }
 
     // Standard getters and setters

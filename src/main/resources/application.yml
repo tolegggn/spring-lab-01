@@ -12,6 +12,8 @@ logging:
 spring:
   application:
     name: spring-lab-01
+  profiles:
+    default: dev
   messages:
     basename: messages
     encoding: UTF-8
@@ -25,7 +27,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate.format_sql: true

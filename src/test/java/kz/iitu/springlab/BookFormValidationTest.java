@@ -76,7 +76,7 @@ class BookFormValidationTest {
     void testVariant2ClassLevelConstraintReprintYearBeforeYear() throws Exception {
         // year 2020, reprintYear 2010 -> fails class level constraint
         mockMvc.perform(post("/books")
-                        .param("title", "Clean Architecture")
+                        .param("title", "Clean Architecture New Edition")
                         .param("author", "Robert Martin")
                         .param("year", "2020")
                         .param("reprintYear", "2010")
@@ -90,14 +90,14 @@ class BookFormValidationTest {
     @Test
     void testValidSubmissionWithVariant2ReprintYear() throws Exception {
         mockMvc.perform(post("/books")
-                        .param("title", "Clean Architecture")
+                        .param("title", "Clean Architecture New Edition")
                         .param("author", "Robert Martin")
                         .param("year", "2020")
                         .param("reprintYear", "2022")
                         .param("genre", "NON_FICTION"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/books"))
-                .andExpect(flash().attribute("message", containsString("Clean Architecture")));
+                .andExpect(flash().attribute("message", containsString("Clean Architecture New Edition")));
     }
 
     @Test

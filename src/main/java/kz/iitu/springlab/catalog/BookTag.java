@@ -8,7 +8,7 @@ import java.time.Instant;
  * A @ManyToMany with attributes: A BookTag entity with an added addedAt column instead of a plain join table.
  */
 @Entity
-@Table(name = "book_tag")
+@Table(name = "book_tag", uniqueConstraints = @UniqueConstraint(columnNames = {"book_id", "tag_id"}))
 public class BookTag {
 
     @Id

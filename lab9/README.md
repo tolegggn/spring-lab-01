@@ -51,3 +51,9 @@ A successful transfer returns HTTP 204. Invalid amounts or identical IDs return 
 - The English report and captured verification logs are in `docs/`.
 
 The deliberate failure service method is a test experiment; it is not exposed as a public HTTP endpoint. JDBC reads in the isolation experiment avoid confusing JPA's first-level cache with database isolation. Separate proxied services make propagation effective.
+
+## Browser demonstration and screenshots
+
+After starting the application, open `http://localhost:8089/demo.html` to submit real transfers and inspect accounts, HTTP status, versions and request history.
+
+[Six browser screenshots and reproduction instructions](docs/screenshots/README.md) are included. The English DOCX and Markdown reports embed all six figures.

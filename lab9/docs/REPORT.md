@@ -93,7 +93,7 @@ Captured evidence is provided as logs, as permitted by the assignment:
 - `startup-2.log`: restart with no migration necessary.
 - `startup-3.log`: upgrade applying only V3.
 
-The logs are observations from this implementation, not fabricated screenshots. Mockito emitted a warning about dynamic agent loading on Java 25; the current tests nevertheless completed successfully.
+The logs and the browser screenshots in Appendix A are observations from this implementation. Screenshots of recorded log excerpts are labelled separately from live application and SQL-console captures. Mockito emitted a warning about dynamic agent loading on Java 25; the current tests nevertheless completed successfully.
 
 ## 9. Answers to the report questions
 
@@ -118,3 +118,43 @@ Flyway is suitable when a team prefers ordered SQL migrations and direct control
 ## 10. Conclusion
 
 An atomic transfer service and repeatable transaction experiments were implemented. A successful transfer preserved the total balance, while insufficient funds and a flushed partial debit left both balances unchanged after failure. The propagation experiment showed that REQUIRED audit writes roll back with the outer transaction, whereas REQUIRES_NEW audit writes survive. H2 READ_COMMITTED observed a newly committed balance on the second read; H2 REPEATABLE_READ retained the original value. Optimistic locking rejected a stale update, preserving the first committed result. Flyway applied V1/V2, skipped them on restart and applied V3 incrementally. The results demonstrate that transaction boundaries, database isolation, version checks and immutable migrations address distinct parts of data consistency.
+
+## Appendix A. Browser screenshots
+
+The figures show actual Chromium page captures. Page content is captured without the desktop tab bar. Figures 1–4 show live application or database results; Figures 5–6 show browser-rendered recorded logs.
+
+### Figure 1. Initial account state
+
+![Figure 1: Initial account state](screenshots/01-initial-accounts.png)
+
+The running application returns Alice 1000.00 and Bob 500.00, each at version 0.
+
+### Figure 2. Successful transfer in the browser
+
+![Figure 2: Successful transfer in the browser](screenshots/02-successful-transfer.png)
+
+An actual POST transfers 100.00. HTTP 204 is returned; balances become 900.00 and 600.00, with versions incremented to 1.
+
+### Figure 3. Insufficient funds in the browser
+
+![Figure 3: Insufficient funds in the browser](screenshots/03-rejected-transfer.png)
+
+A request for 99999.00 returns HTTP 409. The displayed balances remain 900.00 and 600.00. The flushed-debit rollback is a separate test in Figure 5.
+
+### Figure 4. Applied migrations in H2 Console
+
+![Figure 4: Applied migrations in H2 Console](screenshots/04-h2-console.png)
+
+The real SQL console shows V1, V2 and V3 with success TRUE, plus the current account balances and versions.
+
+### Figure 5. Executed transaction experiments
+
+![Figure 5: Executed transaction experiments](screenshots/05-transaction-test-results.png)
+
+Browser rendering of recorded verification.log excerpts: rollback after a flushed debit, REQUIRED versus REQUIRES_NEW, isolation, rejected stale commit and 10 passing tests. This is recorded log evidence, not a live terminal.
+
+### Figure 6. Migration lifecycle across real restarts
+
+![Figure 6: Migration lifecycle across real restarts](screenshots/06-migration-restarts.png)
+
+Browser rendering of original startup logs: V1/V2 are applied initially, no migrations are applied on the second startup, and only V3 is applied on the third.

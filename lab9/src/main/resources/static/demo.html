@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laboratory 9 — Live transaction demo</title>
+<style>
+*{box-sizing:border-box}body{font:17px/1.5 system-ui,sans-serif;background:#f2f5f9;color:#19293e;margin:0}main{max-width:1100px;margin:40px auto;padding:0 28px}h1{font-size:32px;margin:8px 0}h2{font-size:22px;margin:0 0 16px}.meta{color:#50627b}.tag{color:#176b61;letter-spacing:2px;font-size:13px;font-weight:700}.card{background:white;border:1px solid #dce3ed;border-radius:12px;padding:26px;margin-top:24px}table{width:100%;border-collapse:collapse}td,th{text-align:left;padding:13px;border-bottom:1px solid #e2e8f0}th{font-size:13px;text-transform:uppercase;color:#50627b}input{font:inherit;width:170px;padding:9px;border:1px solid #a9b8cc;border-radius:6px}button{font:inherit;background:#194c99;color:white;padding:10px 18px;border:0;border-radius:6px;cursor:pointer}label{display:inline-flex;flex-direction:column;gap:6px;margin-right:12px;margin-bottom:14px;font-size:14px}pre{white-space:pre-wrap;font:15px/1.6 ui-monospace,monospace;background:#edf2f7;padding:16px;border-radius:8px}#result{font-weight:600}a{color:#194c99}
+</style>
+<main>
+<div class="tag">SPRING BOOT · JPA · H2 · FLYWAY</div>
+<h1>Laboratory 9 — Live transaction demo</h1>
+<div class="meta">Tolegen Alikhan · 2406-IS · Variant 2</div>
+<p>Data and responses below come from the running application. Refreshing the accounts does not reset balances.</p>
+<section class="card"><h2>Accounts <button id="refresh" style="float:right;font-size:14px">Refresh</button></h2>
+<table><thead><tr><th>ID</th><th>Owner</th><th>Balance</th><th>Version</th><th>Status</th></tr></thead><tbody id="accounts"></tbody></table>
+<p class="meta">GET /api/accounts · DECIMAL(19,2) balances · @Version for optimistic locking</p></section>
+<section class="card"><h2>Transfer money</h2><form id="transfer">
+<label>Source account<input id="from" type="number" value="1" required></label>
+<label>Destination account<input id="to" type="number" value="2" required></label>
+<label>Amount<input id="amount" type="number" value="100" step="0.01" required></label>
+<button type="submit">Send transfer</button></form>
+<div id="result" role="status">Ready. Submit a transfer to inspect the actual HTTP response.</div>
+<pre id="response">POST /api/transfers</pre></section>
+<section class="card"><h2>Request history</h2><pre id="history">No transfers submitted in this browser session.</pre></section>
+<script>
+const history=[];
+async function refresh(){const r=await fetch('/api/accounts');if(!r.ok)throw Error('Accounts HTTP '+r.status);const rows=await r.json();const body=document.querySelector('#accounts');body.replaceChildren();for(const a of rows){const tr=document.createElement('tr');for(const key of ['id','ownerName','balance','version','status']){const td=document.createElement('td');td.textContent=key==='balance'?Number(a[key]).toFixed(2):a[key];tr.append(td);}body.append(tr);}}
+document.querySelector('#refresh').onclick=()=>refresh().catch(e=>document.querySelector('#result').textContent=e.message);
+document.querySelector('#transfer').onsubmit=async e=>{e.preventDefault();try{const body={fromId:Number(document.querySelector('#from').value),toId:Number(document.querySelector('#to').value),amount:Number(document.querySelector('#amount').value)};const r=await fetch('/api/transfers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const text=await r.text();document.querySelector('#result').textContent='HTTP '+r.status+(r.ok?' — Transfer committed':' — Transfer rejected');document.querySelector('#result').style.color=r.ok?'#176b61':'#a02b32';document.querySelector('#response').textContent='POST /api/transfers\n'+JSON.stringify(body,null,2)+'\n\nHTTP '+r.status+'\n'+(text||'(No response body)');history.push('Amount '+body.amount.toFixed(2)+' · '+body.fromId+' → '+body.toId+' · HTTP '+r.status);document.querySelector('#history').textContent=history.join('\n');await refresh();}catch(error){document.querySelector('#result').textContent=error.message;}};
+refresh().catch(e=>document.querySelector('#result').textContent=e.message);
+</script>
+</main></html>

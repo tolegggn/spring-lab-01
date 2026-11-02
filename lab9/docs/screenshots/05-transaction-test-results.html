@@ -1,0 +1,10 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Transaction experiments — executed test results</title><style>body{font:18px/1.6 system-ui;background:#f2f5f9;color:#19293e;margin:40px}main{max-width:1280px;margin:auto}h1{font-size:30px}p{color:#50627b}pre{font:16px/1.9 ui-monospace,monospace;background:white;padding:28px;border:1px solid #dce3ed;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere}</style><main><h1>Transaction experiments — executed test results</h1><p>Tolegen Alikhan · 2406-IS · Variant 2</p><p>Browser rendering of captured execution logs. These are recorded results, not a live terminal.</p><pre>EVIDENCE isolation=4: first=1000.00, second=1000.00, after reader commit=900.00
+EVIDENCE unchecked exception after SQL debit: rollback to 1000.00 / 500.00
+EVIDENCE transfer: Alice=900.00, Bob=600.00
+EVIDENCE insufficient funds: unchanged balances 1000.00 / 500.00
+EVIDENCE REQUIRES_NEW: outer debit rolled back, committed audit count=1
+EVIDENCE optimistic lock: stale commit rejected, balance=1010.00, version=1
+EVIDENCE isolation=2: first=1000.00, second=900.00, after reader commit=900.00
+EVIDENCE REQUIRED: outer debit rolled back, audit count=0
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS</pre><p>Sources: verification.log (included in lab9/docs).</p></main></html>

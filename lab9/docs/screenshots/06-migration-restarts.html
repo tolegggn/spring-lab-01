@@ -1,0 +1,9 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Flyway — actual application startup logs</title><style>body{font:18px/1.6 system-ui;background:#f2f5f9;color:#19293e;margin:40px}main{max-width:1280px;margin:auto}h1{font-size:30px}p{color:#50627b}pre{font:16px/1.9 ui-monospace,monospace;background:white;padding:28px;border:1px solid #dce3ed;border-radius:12px;white-space:pre-wrap;overflow-wrap:anywhere}</style><main><h1>Flyway — actual application startup logs</h1><p>Tolegen Alikhan · 2406-IS · Variant 2</p><p>Browser rendering of captured execution logs. These are recorded results, not a live terminal.</p><pre>--- startup-1.log ---
+2026-11-02T16:01:47.757Z  INFO 3163 --- [lab9] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema &quot;PUBLIC&quot; to version &quot;1 - create accounts&quot;
+2026-11-02T16:01:47.771Z  INFO 3163 --- [lab9] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema &quot;PUBLIC&quot; to version &quot;2 - add status&quot;
+2026-11-02T16:01:47.780Z  INFO 3163 --- [lab9] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 2 migrations to schema &quot;PUBLIC&quot;, now at version v2 (execution time 00:00.012s)
+--- startup-2.log ---
+2026-11-02T16:01:52.569Z  INFO 3220 --- [lab9] [           main] o.f.core.internal.command.DbMigrate      : Schema &quot;PUBLIC&quot; is up to date. No migration necessary.
+--- startup-3.log ---
+2026-11-02T16:01:57.183Z  INFO 3276 --- [lab9] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema &quot;PUBLIC&quot; to version &quot;3 - index owner name&quot;
+2026-11-02T16:01:57.196Z  INFO 3276 --- [lab9] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema &quot;PUBLIC&quot;, now at version v3 (execution time 00:00.006s)</pre><p>Sources: startup-1.log · startup-2.log · startup-3.log (included in lab9/docs).</p></main></html>
